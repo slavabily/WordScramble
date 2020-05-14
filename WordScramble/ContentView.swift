@@ -18,6 +18,14 @@ struct ContentView: View {
     @State private var errorMessage = ""
     @State private var showingError = false
     
+    private var score: Int {
+        var score = Int()
+        for word in usedWords {
+            score += word.count
+        }
+        return score
+    }
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -30,8 +38,14 @@ struct ContentView: View {
                     Image(systemName: "\($0.count).circle")
                     Text($0)
                 }
+                
+                Text("Score: \(score)")
             }
             .navigationBarTitle(rootWord)
+            .navigationBarItems(leading: Button(action: startGame, label: {
+                Text("Start Game")
+            }))
+                
             .onAppear(perform: startGame)
             .alert(isPresented: $showingError) {
                 Alert(title: Text(errorTitle), message: Text(errorMessage), dismissButton: .default(Text("OK")))
@@ -40,6 +54,7 @@ struct ContentView: View {
     }
     
     func startGame() {
+        usedWords.removeAll()
         // 1. Find URL for start.txt in our app bundle
         if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
             // 2. Load start.txt into a string
@@ -58,7 +73,13 @@ struct ContentView: View {
     }
     
     func isOriginal(word: String) -> Bool {
-        !usedWords.contains(word)
+        guard !usedWords.contains(word) else {
+            return false
+        }
+        guard word != rootWord else {
+            return false
+        }
+        return true
     }
     
     func isPossible(word: String) -> Bool {
@@ -75,6 +96,10 @@ struct ContentView: View {
     }
     
     func isReal(word: String) -> Bool {
+        
+        guard word.count >= 3 else {
+            return false
+        }
         let checker = UITextChecker()
         let range = NSRange(location: 0, length: word.utf16.count)
         let misspeledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
