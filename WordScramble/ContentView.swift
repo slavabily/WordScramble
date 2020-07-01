@@ -33,15 +33,23 @@ struct ContentView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
                     .autocapitalization(.none)
-                
-                List(usedWords, id: \.self) { word in
-                    HStack {
-                        Image(systemName: "\(word.count).circle")
-                        Text(word)
+                GeometryReader {geometry in
+                    List(self.usedWords, id: \.self) { word in
+                        GeometryReader { geo in
+                            HStack {
+                                Image(systemName: "\(word.count).circle")
+                                Text(word)
+                            }
+                            .offset(x: (0.5 * geo.frame(in: .global).minY / geometry.size.width - 1) * 100, y: 0)
+                            .accessibilityElement(children: .ignore)
+                            .accessibility(label: Text("\(word), \(word.count) letters"))
+                             
+                        
+                        }
+                        
                     }
-                    .accessibilityElement(children: .ignore)
-                    .accessibility(label: Text("\(word), \(word.count) letters"))
                 }
+                
                 
                 Text("Score: \(score)")
             }
@@ -67,6 +75,13 @@ struct ContentView: View {
                 let allWords = startWords.components(separatedBy: "\n")
                 // 4. Pick one random word or use "silkworm" as sencible default
                 rootWord = allWords.randomElement() ?? "silkworm"
+                
+                // MARK: For fulfillment of challenge with GeometryReader only
+                for i in 0...20 {
+                    usedWords.append(allWords[i])
+                }
+                
+                print(usedWords.count)
                 
                 // If we are here everything has worked, so we can exit
                 return
