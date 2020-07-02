@@ -40,7 +40,7 @@ struct ContentView: View {
                                 Image(systemName: "\(word.count).circle")
                                 Text(word)
                             }
-                            .offset(x: (0.5 * geo.frame(in: .global).minY / geometry.size.width - 1) * 100, y: 0)
+                            .offset(x: geo.frame(in: .global).minY > geometry.size.height ? (0.5 * geo.frame(in: .global).minY / geometry.size.width - 1) * 100 : -100, y: 0)
                             .accessibilityElement(children: .ignore)
                             .accessibility(label: Text("\(word), \(word.count) letters"))
                              
