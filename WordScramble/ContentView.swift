@@ -38,6 +38,10 @@ struct ContentView: View {
                         GeometryReader { geo in
                             HStack {
                                 Image(systemName: "\(word.count).circle")
+                                    .foregroundColor(Color(
+                                        red: Double(geo.frame(in: .global).minY / geometry.size.height) < 1.0 ? 0 : 1,
+                                        green: 0,
+                                        blue: Double(geo.frame(in: .global).minY / geometry.size.height) < 1.0 ? 1 : 0))
                                 Text(word)
                             }
                             .offset(x: geo.frame(in: .global).minY > geometry.size.height ? (0.5 * geo.frame(in: .global).minY / geometry.size.width - 1) * 100 : -100, y: 0)
@@ -76,12 +80,12 @@ struct ContentView: View {
                 // 4. Pick one random word or use "silkworm" as sencible default
                 rootWord = allWords.randomElement() ?? "silkworm"
                 
-                // MARK: For fulfillment of challenge with GeometryReader only
-                for i in 0...20 {
-                    usedWords.append(allWords[i])
-                }
-                
-                print(usedWords.count)
+//                // MARK: For fulfillment of challenge with GeometryReader only
+//                for i in 0...20 {
+//                    usedWords.append(allWords[i])
+//                }
+//                
+//                print(usedWords.count)
                 
                 // If we are here everything has worked, so we can exit
                 return
